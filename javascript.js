@@ -5,11 +5,7 @@ let smallDiskTowerIndex = 0;
 let mediumDiskTowerIndex = 0;
 let largeDiskTowerIndex = 0;
 
-let smallDisable = [true, false, false];
-let mediumDisable = [true, false, false];
-let largeDisable = [true, false, false];
-
-// let state = getState();
+let disableButtons = [true, false, false, true, true, true, true, true, true];
 
 // view 
 updateView();
@@ -17,39 +13,36 @@ updateView();
 function updateView() {
    document.getElementById('app').innerHTML = /*HTML*/ `
          <div class="game-container">
-            <div class="tower-container">
-               <div class="tower">
-                  ${drawDisks(0)}
-               </div>
-            </div>
-            <div class="tower-container">
-                  <div class="tower">
-                     ${drawDisks(1)}
-                  </div>
-            </div>
-            <div class="tower-container">
-                  <div class="tower">
-                     ${drawDisks(2)};
-                  </div>
-            </div>
+            ${createTowerHtml(0)}
+            ${createTowerHtml(1)}
+            ${createTowerHtml(2)}
          </div>
             Flytt liten disk til 
-            <button onclick="moveSmallDisk(0)" ${smallDisable[0] ? 'disabled' : ''}>venstre tårn</button>
-            <button onclick="moveSmallDisk(1)" ${smallDisable[1] ? 'disabled' : ''}>midtre tårn</button>
-            <button onclick="moveSmallDisk(2)" ${smallDisable[2] ? 'disabled' : ''}>høyre tårn</button>
+             <button onclick="moveSmallDisk(0)" ${disableButtons[0] ? 'disabled' : ''}>venstre tårn</button>
+             
+            <button onclick="moveSmallDisk(1)" ${disableButtons[1] ? 'disabled' : ''}>midtre tårn</button>
+            <button onclick="moveSmallDisk(2)" ${disableButtons[2] ? 'disabled' : ''}>høyre tårn</button>
             <br/>
             Flytt medium disk
-            <button onclick="moveMediumDisk(0)" ${mediumDisable[0] ? 'disabled' : ''}>venstre tårn</button>
-            <button onclick="moveMediumDisk(1)" ${mediumDisable[1] ? 'disabled' : ''}>midtre tårn</button>
-            <button onclick="moveMediumDisk(2)" ${mediumDisable[2] ? 'disabled' : ''}>høyre tårn</button>
+            <button onclick="moveMediumDisk(0)" ${disableButtons[3] ? 'disabled' : ''}>venstre tårn</button>
+            <button onclick="moveMediumDisk(1)" ${disableButtons[4] ? 'disabled' : ''}>midtre tårn</button>
+            <button onclick="moveMediumDisk(2)" ${disableButtons[5] ? 'disabled' : ''}>høyre tårn</button>
             <br/>
             Flytt stor disk
-            <button onclick="moveLargeDisk(0)" ${largeDisable[0] ? 'disabled' : ''}>venstre tårn</button>
-            <button onclick="moveLargeDisk(1)" ${largeDisable[1] ? 'disabled' : ''}>midtre tårn</button>
-            <button onclick="moveLargeDisk(2)" ${largeDisable[2] ? 'disabled' : ''}>høyre tårn</button>
+            <button onclick="moveLargeDisk(0)" ${disableButtons[6] ? 'disabled' : ''}>venstre tårn</button>
+            <button onclick="moveLargeDisk(1)" ${disableButtons[7] ? 'disabled' : ''}>midtre tårn</button>
+            <button onclick="moveLargeDisk(2)" ${disableButtons[8] ? 'disabled' : ''}>høyre tårn</button>
             <br/>
       `;
 }
+
+
+function createBtnHtml(moveFunc, index) {
+   return /*html*/ `
+      <button onclick="${moveFunc(index)}" ${smallDisable[index] ? 'disabled' : ''}>venstre tårn</button>
+   `;
+}
+
 
 function drawDisks(pos) {
    return /*html*/ `
@@ -75,41 +68,47 @@ function createSmallDiskHtml() {
    `;
 }
 
+function createTowerHtml(towerIndex) {
+   return /*html*/ `
+      <div class="tower-container">
+         <div class="tower">
+            ${drawDisks(towerIndex)}
+         </div>
+      </div>
+   `;
+}
+
 
 // controller
 function moveSmallDisk(toTowerIndex) {
-
    smallDiskTowerIndex = checkDiskIndex(toTowerIndex);
    canMove();
-   // getState();
    updateView();
 }
 
 function moveMediumDisk(toTowerIndex) {
-
    mediumDiskTowerIndex = checkDiskIndex(toTowerIndex);
    canMove();
-   // getState();
    updateView();
 }
 
 function moveLargeDisk(toTowerIndex) {
-
    largeDiskTowerIndex = checkDiskIndex(toTowerIndex);
    canMove();
-
-   // getState();
    updateView();
 }
 
 function checkDiskIndex(index) {
+   leftTower = 0;
+   midTower = 1;
+   rightTower = 2;
    switch (index) {
-      case 0:
-         return 0;
-      case 1:
-         return 1;
-      case 2:
-         return 2;
+      case leftTower:
+         return leftTower;
+      case midTower:
+         return midTower;
+      case rightTower:
+         return rightTower;
    }
 }
 
@@ -122,38 +121,32 @@ function disableBtn(btnType, index, value) {
 }
 
 function canMove() {
-   let pos = [];
+   const pos = [0, 1, 2];
+   const mediumButton = 3;
+   const largeButton = 6;
+
    let state = getState();
 
+
    for (let i = 0; i < state.length; i++) {
-      pos.push(i);
-      // state[0] === positions[i] ? disableBtn(smallDisable, positions[i], true) : disableBtn(smallDisable, positions[i], false)
-      // state[1] === positions[i] || state[0] === positions[i] ? disableBtn(mediumDisable, positions[i], true) : disableBtn(mediumDisable, positions[i], false)
-      // state[2] === positions[i] || state[0] === positions[i] || state[1] === positions[i] ? disableBtn(largeDisable, positions[i], true) : disableBtn(largeDisable, positions[i], false)
 
-      console.log("current Disk", pos);
-      console.log("Value at state index", state[i]);
 
-      const isSmallDisabled = state.slice(0, 1).includes(pos[i]);
+      const isSmallDisabled = state[0] === pos[i];
+      disableBtn(disableButtons, pos[i], isSmallDisabled);
+
       const isMediumDisabled = state.slice(0, 2).includes(pos[i]);
+      disableBtn(disableButtons, pos[i] + mediumButton, isMediumDisabled);
+
       const isLargeDisabled = state.slice(0, 3).includes(pos[i]);
+      disableBtn(disableButtons, pos[i] + largeButton, isLargeDisabled);
 
+      if (state[0] === state[1]) {
+         disableBtn(disableButtons, pos[i] + mediumButton, true);
+      }
 
-
-      // const isLargeDisabledT3 = positions[i] === state[2];
-
-      // if (isLargeDisabledT3) {
-      //    disableBtn(largeDisable, positions[i], isLargeDisabled);
-      // }
-
-      disableBtn(smallDisable, pos[i], isSmallDisabled);
-      disableBtn(mediumDisable, pos[i], isMediumDisabled);
-      disableBtn(largeDisable, pos[i], isLargeDisabled);
-
-      // disableBtn(smallDisable, positions[i], isSmallDisabledT);
-      // disableBtn(mediumDisable, positions[i], isMediumDisabledT2);
-      // disableBtn(largeDisable, positions[i], isLargeDisabledT3);
-
+      if (state[0] === state[2] || state[1] === state[2]) {
+         disableBtn(disableButtons, pos[i] + largeButton, true);
+      }
 
    }
 }
