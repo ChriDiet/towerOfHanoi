@@ -1,0 +1,5 @@
+tower of hanoi rules:
+    - can only move top disk;
+    - only smaller on bigger disks;
+    - all disks set to right tower to complete;
+    - cant move disk if another disk on top
