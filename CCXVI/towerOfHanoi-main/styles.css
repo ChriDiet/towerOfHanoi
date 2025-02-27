@@ -1,0 +1,46 @@
+body {
+   background-color: black;
+   color: white;
+   
+}
+.game-container {
+   display: flex;
+   justify-content: space-between;
+   margin: 0 auto;
+   max-width: 600px;
+   
+}
+
+.tower-container {
+   position: relative;
+}
+
+.tower {
+   width: 100px;
+   height: 120px;
+   display: flex;
+   flex-direction: column-reverse;
+   align-items: center;
+   border-bottom: 8px solid white;
+}
+
+.tower-container::before {
+   content: "";
+   position: absolute;
+   bottom: 0;
+   left: 50%;
+   transform: translateX(-50%);
+   width: 8px;
+   height: 120px;
+   z-index: -10;
+   background-color: white;
+}
+
+.disk {
+   width: 20px;
+   height: 20px;
+   background-color: tomato;
+   border: 4px solid white;
+   margin-bottom: 5px;
+}
+
