@@ -63,6 +63,9 @@ function isDisabled(type, index) {
    if (type === 'moveMediumDisk') return disableMediumButton[index] ? 'disabled' : '';
    if (type === 'moveLargeDisk') return disableLargeButton[index] ? 'disabled' : '';
 
+
+   // use if using disableButtons with offset variables;
+
    // if (type === 'moveSmallDisk') return disableButtons[index] ? 'disabled' : '';
    // if (type === 'moveMediumDisk') return disableButtons[index + mediumButtonsRangeOffset] ? 'disabled' : '';
    // if (type === 'moveLargeDisk') return disableButtons[index + largeButtonsRangeOffset] ? 'disabled' : '';
@@ -147,52 +150,60 @@ function disableButton(buttonType, index, value) {
 
 function canMoveDisk() {
    const positions = [0, 1, 2];
-   let state = getDiskState();
+   let diskState = getDiskState();
 
-
-   for (let i = 0; i < state.length; i++) {
-      isAllowedToMove(state, positions, i);
-
-      // const isSmallDisabled = state[0] === positions[i];
-      // disableButton(disableButtons, positions[i], isSmallDisabled);
-
-      // const isMediumDisabled = state.slice(0, 2).includes(positions[i]);
-      // disableButton(disableButtons, positions[i] + mediumButtonsRangeOffset, isMediumDisabled);
-
-      // const isLargeDisabled = state.slice(0, 3).includes(positions[i]);
-      // disableButton(disableButtons, positions[i] + largeButtonsRangeOffset, isLargeDisabled);
-
-      // if (state[0] === state[1]) disableButton(disableButtons, positions[i] + mediumButtonsRangeOffset, true);
-
-      // if (state[0] === state[2] || state[1] === state[2]) disableButton(disableButtons, positions[i] + largeButtonsRangeOffset, true);
+   for (index in diskState) {
+      isAllowedToMove(diskState, positions, index);
    }
+
+   // for (let i = 0; i < diskState.length; i++) {
+   //    isAllowedToMove(diskState, positions, i);
+   // }
    isGameSolved();
 }
 
-function isAllowedToMove(state, positions, index) {
+function isAllowedToMove(diskState, positions, index) {
    let smallDiskIndex = 0;
    let mediumDiskIndex = 1;
    let largeDiskIndex = 2;
 
-   const isSmallDisabled = state[smallDiskIndex] === positions[index];
+   const isSmallDisabled = diskState[smallDiskIndex] === positions[index];
    disableButton(disableSmallButton, positions[index], isSmallDisabled);
 
-   const isMediumDisabled = state.slice(0, 2).includes(positions[index]);
+   const isMediumDisabled = diskState.slice(0, 2).includes(positions[index]);
    disableButton(disableMediumButton, positions[index], isMediumDisabled);
 
-   const isLargeDisabled = state.slice(0, 3).includes(positions[index]);
+   const isLargeDisabled = diskState.slice(0, 3).includes(positions[index]);
    disableButton(disableLargeButton, positions[index], isLargeDisabled);
 
-   if (state[smallDiskIndex] === state[mediumDiskIndex]) disableButton(disableMediumButton, positions[index], true);
-   if (state[smallDiskIndex] === state[largeDiskIndex] || state[mediumDiskIndex] === state[largeDiskIndex]) disableButton(disableLargeButton, positions[index], true);
+   if (diskState[smallDiskIndex] === diskState[mediumDiskIndex])
+      disableButton(disableMediumButton, positions[index], true);
+   if (diskState[smallDiskIndex] === diskState[largeDiskIndex] || diskState[mediumDiskIndex] === diskState[largeDiskIndex])
+      disableButton(disableLargeButton, positions[index], true);
+
+
+   // use if using disableButtons with offset variables;
+
+   // const isSmallDisabled = diskState[0] === positions[i];
+   // disableButton(disableButtons, positions[i], isSmallDisabled);
+
+   // const isMediumDisabled = diskState.slice(0, 2).includes(positions[i]);
+   // disableButton(disableButtons, positions[i] + mediumButtonsRangeOffset, isMediumDisabled);
+
+   // const isLargeDisabled = diskState.slice(0, 3).includes(positions[i]);
+   // disableButton(disableButtons, positions[i] + largeButtonsRangeOffset, isLargeDisabled);
+
+   // if (diskState[0] === diskState[1]) disableButton(disableButtons, positions[i] + mediumButtonsRangeOffset, true);
+
+   // if (diskState[0] === diskState[2] || diskState[1] === diskState[2]) disableButton(disableButtons, positions[i] + largeButtonsRangeOffset, true);
 }
 
 function isGameSolved() {
-   const state = getDiskState();
+   const diskState = getDiskState();
    let solvedDiskPositions = 2
 
    const isSolved = (diskPositions) => diskPositions === solvedDiskPositions;
-   state.every(isSolved) ? solved = true : false;
+   diskState.every(isSolved) ? solved = true : false;
 }
 
 // set in controller or in view?
