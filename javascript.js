@@ -69,11 +69,11 @@ function isDisabled(type, index) {
 
 }
 
-function drawDisks(pos) {
+function drawDisks(position) {
    return /*html*/ `
-      ${largeDiskTowerIndex === pos ? createLargeDiskHtml() : ''}
-      ${mediumDiskTowerIndex === pos ? createMediumDiskHtml() : ''}
-      ${smallDiskTowerIndex === pos ? createSmallDiskHtml() : ''}
+      ${largeDiskTowerIndex === position ? createLargeDiskHtml() : ''}
+      ${mediumDiskTowerIndex === position ? createMediumDiskHtml() : ''}
+      ${smallDiskTowerIndex === position ? createSmallDiskHtml() : ''}
    `;
 }
 
@@ -153,21 +153,18 @@ function canMoveDisk() {
    for (let i = 0; i < state.length; i++) {
       isAllowedToMove(state, positions, i);
 
-      // disableAtDiskPosition(state, pos, i);
-      // disableAllDiskMovement(state, pos, i);
+      // const isSmallDisabled = state[0] === positions[i];
+      // disableButton(disableButtons, positions[i], isSmallDisabled);
 
-      // const isSmallDisabled = state[0] === pos[i];
-      // disableButton(disableButtons, pos[i], isSmallDisabled);
+      // const isMediumDisabled = state.slice(0, 2).includes(positions[i]);
+      // disableButton(disableButtons, positions[i] + mediumButtonsRangeOffset, isMediumDisabled);
 
-      // const isMediumDisabled = state.slice(0, 2).includes(pos[i]);
-      // disableButton(disableButtons, pos[i] + mediumButtonsRangeOffset, isMediumDisabled);
+      // const isLargeDisabled = state.slice(0, 3).includes(positions[i]);
+      // disableButton(disableButtons, positions[i] + largeButtonsRangeOffset, isLargeDisabled);
 
-      // const isLargeDisabled = state.slice(0, 3).includes(pos[i]);
-      // disableButton(disableButtons, pos[i] + largeButtonsRangeOffset, isLargeDisabled);
+      // if (state[0] === state[1]) disableButton(disableButtons, positions[i] + mediumButtonsRangeOffset, true);
 
-      // if (state[0] === state[1]) disableButton(disableButtons, pos[i] + mediumButtonsRangeOffset, true);
-
-      // if (state[0] === state[2] || state[1] === state[2]) disableButton(disableButtons, pos[i] + largeButtonsRangeOffset, true);
+      // if (state[0] === state[2] || state[1] === state[2]) disableButton(disableButtons, positions[i] + largeButtonsRangeOffset, true);
    }
    isGameSolved();
 }
