@@ -5,14 +5,11 @@ let smallDiskTowerIndex = 0;
 let mediumDiskTowerIndex = 0;
 let largeDiskTowerIndex = 0;
 
-// let disableButtons = [true, false, false, true, true, true, true, true, true];
-// const mediumButtonsRangeOffset = 3;
-// const largeButtonsRangeOffset = 6;
-
-
 let disableSmallButton = [true, false, false];
 let disableMediumButton = [true, true, true];
 let disableLargeButton = [true, true, true];
+
+let moves = 0;
 
 
 
@@ -25,24 +22,36 @@ function updateView() {
    !solved
       ? document.getElementById('app').innerHTML = /*HTML*/ `
       <div class="game-container">
-         ${createTowerHtml(0)}
-         ${createTowerHtml(1)}
-         ${createTowerHtml(2)}
+      <div style="margin-left:40px"> Antall trekk: ${moves}</div>
+         <div class="towers">
+            ${createTowerHtml(0)}
+            ${createTowerHtml(1)}
+            ${createTowerHtml(2)}
+         </div>
+         <div class="buttons">
+            <div class="smallDiskBtn">
+               ${createDiskButtonsHtml('moveSmallDisk', 'Flytt liten disk til')}
+            </div>
+            <div class="mediumDiskBtn">
+               ${createDiskButtonsHtml('moveMediumDisk', 'Flytt medium disk')}
+            </div>
+            <div class="largeDiskBtn">
+               ${createDiskButtonsHtml('moveLargeDisk', 'Flytt stor disk')}
+            </div>
+            </div>
       </div>
-
-   ${createDiskButtonsHtml('moveSmallDisk', 'Flytt liten disk til')}
-   ${createDiskButtonsHtml('moveMediumDisk', 'Flytt medium disk')}
-   ${createDiskButtonsHtml('moveLargeDisk', 'Flytt stor disk')}
-   
       `
       : document.getElementById('app').innerHTML = /*html*/ `
-      <div>Spillet løst</div>
-      ${createButtonHtml('restart', 'Start nytt spill')}
+      <div class="game-container">
+      <div class ="gameSolved">
+      <div>Gratulerer!<br> Spillet er løst</div>
+         <div class="buttonSolved"> ${createButtonHtml('restart', 'Start nytt spill')}</div>
+      </div>
    `;
 }
 
 function createDiskButtonsHtml(diskType, buttonText) {
-   const labels = ['venstre tårn', 'midtre tårn', 'høyre tårn'];
+   const labels = ['Venstre tårn', 'Midtre tårn', 'Høyre tårn'];
    let buttonHtml = `<br/>${buttonText}`;
 
    labels.forEach((label, index) => {
@@ -54,7 +63,7 @@ function createDiskButtonsHtml(diskType, buttonText) {
 function createButtonHtml(onclick, label, index) {
    return /*html*/ `
       <button onclick="${onclick}(${index})" ${isDisabled(onclick, index)}>
-         ${label}
+      ${label}
       </button>
    `;
 }
@@ -62,13 +71,6 @@ function isDisabled(type, index) {
    if (type === 'moveSmallDisk') return disableSmallButton[index] ? 'disabled' : '';
    if (type === 'moveMediumDisk') return disableMediumButton[index] ? 'disabled' : '';
    if (type === 'moveLargeDisk') return disableLargeButton[index] ? 'disabled' : '';
-
-
-   // use if using disableButtons with offset variables;
-
-   // if (type === 'moveSmallDisk') return disableButtons[index] ? 'disabled' : '';
-   // if (type === 'moveMediumDisk') return disableButtons[index + mediumButtonsRangeOffset] ? 'disabled' : '';
-   // if (type === 'moveLargeDisk') return disableButtons[index + largeButtonsRangeOffset] ? 'disabled' : '';
 
 }
 
@@ -111,18 +113,24 @@ function createTowerHtml(towerIndex) {
 function moveSmallDisk(toTowerIndex) {
    smallDiskTowerIndex = checkDiskIndex(toTowerIndex);
    canMoveDisk();
+   if (canMoveDisk)
+      moves++
    updateView();
 }
 
 function moveMediumDisk(toTowerIndex) {
    mediumDiskTowerIndex = checkDiskIndex(toTowerIndex);
    canMoveDisk();
+   if (canMoveDisk)
+      moves++
    updateView();
 }
 
 function moveLargeDisk(toTowerIndex) {
    largeDiskTowerIndex = checkDiskIndex(toTowerIndex);
    canMoveDisk();
+   if (canMoveDisk)
+      moves++
    updateView();
 }
 
@@ -156,9 +164,6 @@ function canMoveDisk() {
       isAllowedToMove(diskState, positions, index);
    }
 
-   // for (let i = 0; i < diskState.length; i++) {
-   //    isAllowedToMove(diskState, positions, i);
-   // }
    isGameSolved();
 }
 
@@ -181,21 +186,6 @@ function isAllowedToMove(diskState, positions, index) {
    if (diskState[smallDiskIndex] === diskState[largeDiskIndex] || diskState[mediumDiskIndex] === diskState[largeDiskIndex])
       disableButton(disableLargeButton, positions[index], true);
 
-
-   // use if using disableButtons with offset variables;
-
-   // const isSmallDisabled = diskState[0] === positions[i];
-   // disableButton(disableButtons, positions[i], isSmallDisabled);
-
-   // const isMediumDisabled = diskState.slice(0, 2).includes(positions[i]);
-   // disableButton(disableButtons, positions[i] + mediumButtonsRangeOffset, isMediumDisabled);
-
-   // const isLargeDisabled = diskState.slice(0, 3).includes(positions[i]);
-   // disableButton(disableButtons, positions[i] + largeButtonsRangeOffset, isLargeDisabled);
-
-   // if (diskState[0] === diskState[1]) disableButton(disableButtons, positions[i] + mediumButtonsRangeOffset, true);
-
-   // if (diskState[0] === diskState[2] || diskState[1] === diskState[2]) disableButton(disableButtons, positions[i] + largeButtonsRangeOffset, true);
 }
 
 function isGameSolved() {
@@ -212,5 +202,6 @@ function restart() {
    mediumDiskTowerIndex = 0;
    largeDiskTowerIndex = 0;
    solved = false;
+   moves = 0;
    updateView();
 }
