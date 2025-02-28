@@ -37,7 +37,7 @@ function updateView() {
       `
       : document.getElementById('app').innerHTML = /*html*/ `
       <div>Spillet løst</div>
-      ${createButtonHtml('restart', '', 'Start nytt spill')}
+      ${createButtonHtml('restart', 'Start nytt spill')}
    `;
 }
 
@@ -46,12 +46,12 @@ function createDiskButtonsHtml(diskType, buttonText) {
    let buttonHtml = `<br/>${buttonText}`;
 
    labels.forEach((label, index) => {
-      buttonHtml += createButtonHtml(diskType, index, label)
+      buttonHtml += createButtonHtml(diskType, label, index)
    })
 
    return buttonHtml;
 }
-function createButtonHtml(onclick, index, label) {
+function createButtonHtml(onclick, label, index) {
    return /*html*/ `
       <button onclick="${onclick}(${index})" ${isDisabled(onclick, index)}>
          ${label}
@@ -62,6 +62,7 @@ function isDisabled(type, index) {
    if (type === 'moveSmallDisk') return disableSmallButton[index] ? 'disabled' : '';
    if (type === 'moveMediumDisk') return disableMediumButton[index] ? 'disabled' : '';
    if (type === 'moveLargeDisk') return disableLargeButton[index] ? 'disabled' : '';
+
    // if (type === 'moveSmallDisk') return disableButtons[index] ? 'disabled' : '';
    // if (type === 'moveMediumDisk') return disableButtons[index + mediumButtonsRangeOffset] ? 'disabled' : '';
    // if (type === 'moveLargeDisk') return disableButtons[index + largeButtonsRangeOffset] ? 'disabled' : '';
@@ -136,7 +137,7 @@ function checkDiskIndex(index) {
    }
 }
 
-function getState() {
+function getDiskState() {
    return [smallDiskTowerIndex, mediumDiskTowerIndex, largeDiskTowerIndex];
 }
 
@@ -145,24 +146,15 @@ function disableButton(buttonType, index, value) {
 }
 
 function canMoveDisk() {
-   const pos = [0, 1, 2];
-   let state = getState();
+   const positions = [0, 1, 2];
+   let state = getDiskState();
 
 
    for (let i = 0; i < state.length; i++) {
-      const isSmallDisabled = state[0] === pos[i];
-      disableButton(disableSmallButton, pos[i], isSmallDisabled);
+      isAllowedToMove(state, positions, i);
 
-      const isMediumDisabled = state.slice(0, 2).includes(pos[i]);
-      disableButton(disableMediumButton, pos[i], isMediumDisabled);
-
-      const isLargeDisabled = state.slice(0, 3).includes(pos[i]);
-      disableButton(disableLargeButton, pos[i], isLargeDisabled);
-
-      if (state[0] === state[1]) disableButton(disableMediumButton, pos[i], true);
-
-      if (state[0] === state[2] || state[1] === state[2]) disableButton(disableLargeButton, pos[i], true);
-
+      // disableAtDiskPosition(state, pos, i);
+      // disableAllDiskMovement(state, pos, i);
 
       // const isSmallDisabled = state[0] === pos[i];
       // disableButton(disableButtons, pos[i], isSmallDisabled);
@@ -177,17 +169,34 @@ function canMoveDisk() {
 
       // if (state[0] === state[2] || state[1] === state[2]) disableButton(disableButtons, pos[i] + largeButtonsRangeOffset, true);
    }
-   solvedHanoiGame();
+   isGameSolved();
 }
 
+function isAllowedToMove(state, positions, index) {
+   let smallDiskIndex = 0;
+   let mediumDiskIndex = 1;
+   let largeDiskIndex = 2;
 
-function solvedHanoiGame() {
-   const state = getState();
+   const isSmallDisabled = state[smallDiskIndex] === positions[index];
+   disableButton(disableSmallButton, positions[index], isSmallDisabled);
 
-   const isSolved = (diskPositions) => diskPositions === 2;
+   const isMediumDisabled = state.slice(0, 2).includes(positions[index]);
+   disableButton(disableMediumButton, positions[index], isMediumDisabled);
+
+   const isLargeDisabled = state.slice(0, 3).includes(positions[index]);
+   disableButton(disableLargeButton, positions[index], isLargeDisabled);
+
+   if (state[smallDiskIndex] === state[mediumDiskIndex]) disableButton(disableMediumButton, positions[index], true);
+   if (state[smallDiskIndex] === state[largeDiskIndex] || state[mediumDiskIndex] === state[largeDiskIndex]) disableButton(disableLargeButton, positions[index], true);
+}
+
+function isGameSolved() {
+   const state = getDiskState();
+   let solvedDiskPositions = 2
+
+   const isSolved = (diskPositions) => diskPositions === solvedDiskPositions;
    state.every(isSolved) ? solved = true : false;
 }
-
 
 // set in controller or in view?
 function restart() {
